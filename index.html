@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Builder - Aprenda a Construir Frases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 800px;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .lesson-info {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .question-box {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .portuguese-sentence {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .english-hint {
+            color: #28a745;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .words-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            min-height: 100px;
+            padding: 20px;
+            background-color: white;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+        }
+
+        .word-btn {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .word-btn.available {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .word-btn.available:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .word-btn.selected {
+            background-color: #28a745;
+            color: white;
+            cursor: default;
+        }
+
+        .word-btn.used {
+            background-color: #6c757d;
+            color: white;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .word-btn.option {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .word-btn.option:hover {
+            border-color: #667eea;
+            background-color: #e8f0fe;
+        }
+
+        .construction-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .constructed-word {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 8px;
+            font-size: 1.2em;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .tip-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ English Builder</h1>
+            <p>Construa frases em inglês arrastando as palavras na ordem correta!</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress" style="width: 0%"></div>
+        </div>
+
+        <div class="lesson-info">
+            <span>Lição <span id="current-lesson">1</span>/<span id="total-lessons">5</span></span>
+            <span>Nível: Iniciante</span>
+        </div>
+
+        <div class="question-box">
+            <div class="portuguese-sentence" id="portuguese-sentence"></div>
+            <div class="english-hint" id="english-hint"></div>
+        </div>
+
+        <div id="construction-area" class="construction-area"></div>
+
+        <div class="words-container" id="words-container"></div>
+
+        <div class="controls">
+            <button class="btn btn-secondary" id="reset-btn" onclick="resetCurrentQuestion()">↺ Reset</button>
+            <button class="btn btn-primary" id="check-btn" onclick="checkAnswer()">✓ Verificar</button>
+            <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Próxima →</button>
+        </div>
+
+        <div id="feedback" class="feedback hidden"></div>
+
+        <div id="tip-box" class="tip-box hidden"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Pontos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Sequência</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="correct-answers">0</div>
+                <div class="stat-label">Acertos</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banco de dados de lições
+        const lessons = [
+            {
+                id: 1,
+                portuguese: "Eu gosto de pizza",
+                english: "I like pizza",
+                words: ["I", "like", "pizza"],
+                options: ["I", "like", "pizza", "love", "eat"],
+                tip: "Em inglês, o sujeito (I) vem primeiro, depois o verbo (like) e por último o objeto (pizza)"
+            },
+            {
+                id: 2,
+                portuguese: "Ela lê livros",
+                english: "She reads books",
+                words: ["She", "reads", "books"],
+                options: ["She", "reads", "books", "read", "book"],
+                tip: "Para 'ela' (she), o verbo ganha um 's' no final: read → reads"
+            },
+            {
+                id: 3,
+                portuguese: "Nós moramos no Brasil",
+                english: "We live in Brazil",
+                words: ["We", "live", "in", "Brazil"],
+                options: ["We", "live", "in", "Brazil", "lives", "at"],
+                tip: "Preposições como 'in' (em) são importantes para indicar lugar"
+            },
+            {
+                id: 4,
+                portuguese: "Eles não jogam futebol",
+                english: "They don't play soccer",
+                words: ["They", "don't", "play", "soccer"],
+                options: ["They", "don't", "play", "soccer", "doesn't", "plays"],
+                tip: "Para negativas, usamos don't (do not) antes do verbo principal"
+            },
+            {
+                id: 5,
+                portuguese: "Você fala inglês?",
+                english: "Do you speak English?",
+                words: ["Do", "you", "speak", "English?"],
+                options: ["Do", "you", "speak", "English?", "Are", "speaks"],
+                tip: "Em perguntas, o verbo auxiliar 'do' vem antes do sujeito"
+            }
+        ];
+
+        let currentLessonIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let correctAnswers = 0;
+        let selectedWords = [];
+        let availableWords = [];
+
+        function loadLesson(index) {
+            const lesson = lessons[index];
+            document.getElementById('portuguese-sentence').textContent = lesson.portuguese;
+            document.getElementById('english-hint').textContent = `Dica: ${lesson.words.length} palavras`;
+            document.getElementById('current-lesson').textContent = index + 1;
+            document.getElementById('total-lessons').textContent = lessons.length;
+            
+            // Atualizar barra de progresso
+            const progress = ((index) / lessons.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+
+            // Resetar seleção
+            selectedWords = [];
+            availableWords = [...lesson.options];
+            
+            // Embaralhar palavras disponíveis
+            shuffleArray(availableWords);
+            
+            updateDisplay();
+            clearFeedback();
+            
+            // Desabilitar botão próximo
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function updateDisplay() {
+            // Mostrar palavras selecionadas (frase em construção)
+            const constructionArea = document.getElementById('construction-area');
+            constructionArea.innerHTML = '';
+            selectedWords.forEach((word, index) => {
+                const wordElement = document.createElement('span');
+                wordElement.className = 'constructed-word';
+                wordElement.textContent = word;
+                wordElement.onclick = () => removeWord(index);
+                constructionArea.appendChild(wordElement);
+            });
+
+            // Mostrar palavras disponíveis
+            const wordsContainer = document.getElementById('words-container');
+            wordsContainer.innerHTML = '';
+            availableWords.forEach((word, index) => {
+                const button = document.createElement('button');
+                button.className = 'word-btn available';
+                button.textContent = word;
+                button.onclick = () => addWord(word);
+                wordsContainer.appendChild(button);
+            });
+
+            // Atualizar dica se necessário
+            const tipBox = document.getElementById('tip-box');
+            if (selectedWords.length === lessons[currentLessonIndex].words.length) {
+                tipBox.classList.remove('hidden');
+                tipBox.textContent = 'Clique em "Verificar" para conferir sua resposta!';
+            } else {
+                tipBox.classList.add('hidden');
+            }
+        }
+
+        function addWord(word) {
+            const lesson = lessons[currentLessonIndex];
+            if (selectedWords.length < lesson.words.length) {
+                selectedWords.push(word);
+                const index = availableWords.indexOf(word);
+                if (index > -1) {
+                    availableWords.splice(index, 1);
+                }
+                updateDisplay();
+            }
+        }
+
+        function removeWord(index) {
+            const word = selectedWords[index];
+            selectedWords.splice(index, 1);
+            availableWords.push(word);
+            shuffleArray(availableWords);
+            updateDisplay();
+        }
+
+        function resetCurrentQuestion() {
+            const lesson = lessons[currentLessonIndex];
+            selectedWords = [];
+            availableWords = [...lesson.options];
+            shuffleArray(availableWords);
+            updateDisplay();
+            clearFeedback();
+        }
+
+        function checkAnswer() {
+            const lesson = lessons[currentLessonIndex];
+            const userAnswer = selectedWords.join(' ');
+            const correctAnswer = lesson.english;
+            
+            const feedback = document.getElementById('feedback');
+            const tipBox = document.getElementById('tip-box');
+            
+            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                // Resposta correta
+                feedback.className = 'feedback success';
+                feedback.classList.remove('hidden');
+                feedback.textContent = '✅ Correto! Muito bem!';
+                
+                // Atualizar pontuação
+                score += 10;
+                streak += 1;
+                correctAnswers += 1;
+                
+                // Mostrar dica de gramática
+                tipBox.classList.remove('hidden');
+                tipBox.className = 'tip-box success';
+                tipBox.textContent = lesson.tip;
+                
+                // Habilitar botão próximo
+                document.getElementById('next-btn').disabled = false;
+            } else {
+                // Resposta incorreta
+                feedback.className = 'feedback error';
+                feedback.classList.remove('hidden');
+                feedback.textContent = '❌ Quase lá! Tente novamente.';
+                
+                streak = 0;
+                
+                // Mostrar dica de ajuda
+                tipBox.classList.remove('hidden');
+                tipBox.className = 'tip-box error';
+                tipBox.textContent = `Dica: A ordem correta é: ${correctAnswer}`;
+            }
+            
+            // Atualizar estatísticas
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('correct-answers').textContent = correctAnswers;
+        }
+
+        function nextQuestion() {
+            if (currentLessonIndex < lessons.length - 1) {
+                currentLessonIndex++;
+                loadLesson(currentLessonIndex);
+            } else {
+                // Fim das lições
+                const feedback = document.getElementById('feedback');
+                feedback.className = 'feedback success';
+                feedback.classList.remove('hidden');
+                feedback.textContent = '🎉 Parabéns! Você completou todas as lições!';
+                
+                document.getElementById('next-btn').disabled = true;
+            }
+        }
+
+        function clearFeedback() {
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('hidden');
+            
+            const tipBox = document.getElementById('tip-box');
+            tipBox.classList.add('hidden');
+            tipBox.className = 'tip-box hidden';
+        }
+
+        // Inicializar primeira lição
+        loadLesson(0);
+    </script>
+</body>
+</html>
